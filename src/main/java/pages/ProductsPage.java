@@ -5,8 +5,12 @@
 
 package pages;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 
 /**
@@ -14,20 +18,18 @@ import org.openqa.selenium.WebDriver;
  * Manages product listings, adding items to cart, and navigation to cart.
  */
 
-public class ProductsPage {
+public class ProductsPage extends BasePage{
 
-    private WebDriver driver;
-    
-    // constructor 
+    // constructor :Pass the driver to the constructor of the base page
     public ProductsPage(WebDriver driver) {
-        this.driver= driver;    
+        super(driver);    
     }
     
     // Cart Icon / Cart Badge locator
-    private By cartIcon = By.cssSelector("a.shopping_cart_link");
+    private final By cartIcon = By.cssSelector("a.shopping_cart_link");
     
     // Cart Badge locator (jo count dikhata hai)
-    private By shoppingCartBadge = By.cssSelector("a.shopping_cart_link span.shopping_cart_badge");
+    private final By shoppingCartBadge = By.cssSelector("a.shopping_cart_link span.shopping_cart_badge");
     
     
     // Methods: Elements par Actions
@@ -37,43 +39,50 @@ public class ProductsPage {
      */
     public void addProductByName(String name) {
         
-        // Final Correct XPath: यह XPath प्रोडक्ट के नाम से चलता है और सीधे 'Add to cart' data-test ID वाले बटन को क्लिक करता है।
+    	// Dynamic XPath creation
     	String buttonXPath = String.format(
     	        "//div[contains(@class, 'inventory_item_name') and contains(text(), '%s')]/ancestor::div[@class='inventory_item_description']//button[contains(@data-test, 'add-to-cart')]", 
     	        name);
     	
-            try {
-                driver.findElement(By.xpath(buttonXPath)).click();
-                System.out.println(name + " added to cart successfully.");
-                
-            } catch (Exception e) {
-                System.err.println("Error: Could not find 'Add to cart' button for " + name);
-                throw e;
-            }
+    	//Use the clickElement of BasePage which will wait first and then click
+    	clickElement(By.xpath(buttonXPath));
+    	System.out.println(name+" added to cart successfully.");
         }
     
     /**
-     * Navigates the user from the Products page to the Shopping Cart page.
+     * Navigates to the Cart page using BasePage utility.
      */
     public void goToCart() {
-        driver.findElement(cartIcon).click();
+        clickElement(cartIcon);
         System.out.println("Navigated to the Cart page.");
     }
     
     /**
-     * Returns the count displayed on the shopping cart badge (e.g., "1", "2").
-     * @throws InterruptedException 
+     * Returns the badge count. Instead of Thread.sleep, we will update the logic.  
      */
     
     
-    public String getCartBadgeCount() throws InterruptedException {
-        try {
-            // Agar badge exist karta hai, uska text return karo
-        	Thread.sleep(1000);
-            return driver.findElement(shoppingCartBadge).getText();
-        } catch (Exception e) {
-            // Agar cart empty hai aur badge nahi dikhta, toh "0" return karein
+    public String getCartBadgeCount() {
+        // Step: Pehle check karo badge screen par hai ya nahi (Wait included in isElementDisplayed)
+        if (isElementDisplayed(shoppingCartBadge)) {
+            return getElementText(shoppingCartBadge);
+        } else {
+            // Agar badge nahi dikh raha, iska matlab cart empty hai
             return "0";
         }
+        
+      }
+    
+    public List<String> getProductsStartingWithSauce(){
+    	// 1. Take the list of Saare Product Elements
+    	List<WebElement> productElements =driver.findElements(By.className("inventory_item_name"));
+    	
+    	//2. use java 8 stream
+    	return productElements.stream().map(WebElement::getText) //change webelement into string
+    			.filter(name-> name.startsWith("Sauce"))         //only take this which is start from "sauce" word
+    			.collect(Collectors.toList());                   //save result in list
+    	
+    			
     }
+      
 }

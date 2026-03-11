@@ -7,51 +7,67 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class LoginPage {
+public class LoginPage extends BasePage {
     
-    private WebDriver driver;
-    
+    // Constructor receives driver and passes it to BasePage
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
+        super(driver); 
     }
     
-    // Locators
-    private By usernameField = By.id("user-name");
-    private By passwordField = By.id("password");
-    private By loginButton = By.id("login-button");
-    private By menuButton = By.id("react-burger-menu-btn");
-    private By logoutLink = By.id("logout_sidebar_link");
-    private By errorMessageBy = By.cssSelector("div.error-message-container h3");
-    
+    // Locators - Using private final as a best practice
+    private final By usernameField = By.id("user-name");
+    private final By passwordField = By.id("password");
+    private final By loginButton = By.id("login-button");
+    private final By menuButton = By.id("react-burger-menu-btn");
+    private final By logoutLink = By.id("logout_sidebar_link");
+    private final By errorMessageBy = By.cssSelector("div.error-message-container h3");
     
     /**
-     * Enters credentials and clicks the login button.
+     * Enters credentials and clicks the login button using BasePage utilities.
      */
     public void login(String username, String password) {
-        driver.findElement(usernameField).sendKeys(username);
-        driver.findElement(passwordField).sendKeys(password);
-        driver.findElement(loginButton).click();
+        typetext(usernameField, username);
+        typetext(passwordField, password);
+        clickElement(loginButton);
+    }
+    
+    /**
+     * Fetches the error message text after validation.
+     */
+    public String getErrorMessage() {
+        return getElementText(errorMessageBy);
+    }
+    
+    /**
+     * Helper method to login based on user profile type.
+     */
+    public void loginAs(String userType) {
+        switch (userType.toLowerCase()) {
+            case "standard_user":
+                login("standard_user", "secret_sauce");
+                break;
+            case "locked_out_user":
+                login("locked_out_user", "secret_sauce");
+                break;
+            case "problem_user":
+                login("problem_user", "secret_sauce");
+                break;
+            default:
+                System.err.println("Invalid user type provided: " + userType);
+        }
     }
     
     /**
      * Logs out the user from the application using the side menu.
      */
     public void logout() {
-    	try {
-            driver.findElement(menuButton).click();
-             Thread.sleep(1500);
-             driver.findElement(logoutLink).click();
-             Thread.sleep(1000); // Wait for logout to process
-
-    	}catch (Exception e) {
-			System.out.println("Logout failed: " + e.getMessage());
-		}
-    }
-    
-    /**
-     * Returns the text of the error message displayed after a failed login attempt.
-     */
-    public String getErrorMessage() {
-        return driver.findElement(errorMessageBy).getText();
+        try {
+            clickElement(menuButton);
+            clickElement(logoutLink);
+            // Verify logout by waiting for the login button to be visible again
+            waitForVisible(loginButton);
+        } catch (Exception e) {
+            System.err.println("Logout failed: " + e.getMessage());
+        }
     }
 }

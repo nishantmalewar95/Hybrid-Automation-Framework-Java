@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="SauceDemo_Functional_Suite" parallel="methods" thread-count="3">
+    
+    <listeners>
+        <listener class-name="com.saucedemo.reportings.TestListener" />
+    </listeners>
+    
+    <test name="Authentication_and_Product_Flow_Tests">
+        <classes>
+            <class name="tests.LoginTests"/>
+            <class name="tests.ProductsAndCartTests"/>
+            <class name="com.los.tests.LoanOriginationTest"/>
+            
+            <class name="api.tests.PostWithPojoTest"/>
+        </classes>
+    </test>
+    
+</suite>
