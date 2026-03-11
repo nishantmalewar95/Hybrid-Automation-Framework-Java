@@ -1,0 +1,8 @@
+java_selenium_framework\java_selenium_framework\App.class
+pages\BasePage.class
+pages\LoanDashboardPage.class
+pages\ProductsPage.class
+pages\LoginPage.class
+pages\CartPage.class
+pages\LosLoginPage.class
+models\LoanData.class

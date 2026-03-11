@@ -1,10 +1,12 @@
 package BasicPractice;
 
+import java.util.Arrays;
+
 public class FindMaxNoInArray {
 
 	public static void main(String[] args) {
 		
-		int[] numbers = {15,25,35,8,9};
+	/*	int[] numbers = {15,25,35,8,9};
 		int max = numbers[0];
 		
 		for(int i=1; i< numbers.length; i++)
@@ -19,17 +21,20 @@ public class FindMaxNoInArray {
 		System.out.println(max);
 		System.out.println(java.util.Arrays.toString(numbers));
 	} 
-
+*/
 		
-//		int[] numbers= {5,6,23,34,53,22,11};
-//		
-//		OptionalInt maxStream = Arrays.stream(numbers).max();
-//		
-//		
-//		if(maxStream.isPresent()) {
-//			System.out.println(maxStream.getAsInt());
-//		}
-//	}
+		int[] numbers= {5,6,23,34,53,22,11};
+		
+	/*	OptionalInt maxStream = Arrays.stream(numbers).max();
+		
+		
+		if(maxStream.isPresent()) {
+			System.out.println(maxStream.getAsInt());
+		} */
+		
+		Arrays.stream(numbers).max().ifPresent(System.out::println);
+		
+	}
 	
 		
 	}

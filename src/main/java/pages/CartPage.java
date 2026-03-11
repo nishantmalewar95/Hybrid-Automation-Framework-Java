@@ -3,61 +3,62 @@
  */
 package pages;
 
-import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
-public class CartPage {
+public class CartPage extends BasePage {
 
-    private WebDriver driver;
-    
+	// Constructor: It is necessary to reach Driver or BasePage
     public CartPage(WebDriver driver) {
-        this.driver=driver;
+        super(driver);
     }
     
     // Locators
-    private By cartItemContainer = By.cssSelector("div.cart_item");
-    private By checkoutButtonBy = By.id("checkout");
+    private final By cartItemContainer = By.cssSelector("div.cart_item");
+    private final By checkoutButtonBy = By.id("checkout");
     
     
     /**
      * Returns the total number of items currently displayed in the cart.
      */
     public int getNumberOfItemInCart() {
-        // cart_item कंटेनर को ढूंढकर, आइटम की संख्या रिटर्न करें
-        return driver.findElements(cartItemContainer).size();
-    }
+    	if(isElementDisplayed(cartItemContainer)) {
+    		return driver.findElements(cartItemContainer).size();
+    		}
+    	return 0;
+    	}
     
     /**
      * Checks if a specific product (by name) is present in the cart.
      */
+ // Method to verify if a product is in the cart
     public boolean isProductInCart(String productName) {
-        // XPath जो विशिष्ट प्रोडक्ट नाम को सीधे कार्ट कंटेनर में ढूंढता है
-        String itemXPath = String.format("//div[@class='inventory_item_name' and text()='%s']", productName);
-        
-        List<WebElement> items = driver.findElements(By.xpath(itemXPath));
-        return items.size() > 0;
+        String xpath = "//div[@class='inventory_item_name' and text()='" + productName + "']";
+        return isElementDisplayed(By.xpath(xpath));
     }
+  
+
     
     /**
      * Removes a product from the cart by its name.
+     * Reuses clickElement utility from BasePage.
      */
     public void removeProductByName(String productName) {
-        // XPath to find the specific item row and click its 'Remove' button.
         String removeButtonXpath = String.format(
             "//div[text()='%s']/ancestor::div[@class='cart_item']//button[text()='Remove']", 
             productName);
         
-        driver.findElement(By.xpath(removeButtonXpath)).click();
+        // BasePage ka method use kar rahe hain jo internally wait + click karta hai
+        clickElement(By.xpath(removeButtonXpath));
         System.out.println(productName + " removed from cart successfully.");
     }
 
     /**
-     * Clicks the Checkout button to proceed to the next step.
+     * Clicks the Checkout button to proceed.
+     * Reuses clickElement utility from BasePage.
      */
     public void clickCheckout() {
-    	driver.findElement(checkoutButtonBy).click();
-    	System.out.println("Clicked Checkout");
+        clickElement(checkoutButtonBy);
+        System.out.println("Clicked Checkout");
     }
 }

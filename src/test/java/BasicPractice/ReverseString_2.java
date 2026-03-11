@@ -13,6 +13,17 @@ public class ReverseString_2 {
 		
 		System.out.println(origiString);
 		System.out.println(reverString);
+		
+		
+		//other method
+		
+	/*	String str = "ABCDEF";
+		     String reversed = new StringBuilder(str).reverse().toString();
+		     System.out.println("1. Reversed String: " + reversed);
+		     
+	*/	     
+	
 	}
+
 
 }
