@@ -1,17 +1,16 @@
-# Step 1: Use official Maven image with OpenJDK 17
+# Step 1: Base Image
 FROM maven:3.8.4-openjdk-17
 
-# Step 2: Set the directory inside the container
-# Maine yahan /app define kiya hai
+# Step 2: Work Directory (Container ke andar ka folder)
 WORKDIR /app
 
-# Step 3: Copy all the project files
-# DHAYAN DEIN: Yahan '.' ke baad '/app/' likha hai. 
-# Isse Docker ko pata chalta hai ki saari files /app folder ke andar daalni hain.
+# Step 3: Copy command (Yahan galti ho rahi thi)
+# Pehla dot (.) ka matlab hai aapka PC
+# Doosra path (/app/) ka matlab hai container ka folder
 COPY . /app/
 
-# Step 4: Run maven command to download dependencies
+# Step 4: Dependencies download karein
 RUN mvn dependency:go-offline
 
-# Step 5: Execute the test suite
+# Step 5: Test run karein
 CMD ["mvn", "test"]
