@@ -1,0 +1,34 @@
+name: SDET Framework Tests
+
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *' 
+  workflow_dispatch: 
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Naya Step: Docker Image Build karna
+    - name: Build Docker Image
+      run: docker build -t my-sdet-framework .
+
+    # Naya Step: Docker Container Run karna
+    - name: Run Tests in Docker
+      run: docker run my-sdet-framework
+
+    # Artifacts (Reports) extract karne ke liye niche wala step update kiya hai
+    - name: Upload Test Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: automation-report
+        path: target/surefire-reports/
