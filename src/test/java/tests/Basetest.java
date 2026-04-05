@@ -18,13 +18,9 @@ import org.testng.annotations.BeforeMethod;
 
 public class Basetest {
 
-    // Initialize Logger
     protected static final Logger logger = LogManager.getLogger(Basetest.class);
-
-    // ThreadLocal driver for parallel execution
     protected static ThreadLocal<WebDriver> tdriver = new ThreadLocal<>();
 
-    // Helper method to access current thread's driver
     public static WebDriver getDriver() {
         return tdriver.get();
     }
@@ -35,62 +31,53 @@ public class Basetest {
         
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--incognito");
+
+        // --- GITHUB ACTIONS KE LIYE ZAROORI SETTINGS ---
+        // Agar aap GitHub par chala rahe hain, toh headless true hona chahiye
+        options.addArguments("--headless=new"); // Cloud pe bina screen ke chalne ke liye
+        options.addArguments("--no-sandbox"); // Security layer bypass karne ke liye (Linux mandatory)
+        options.addArguments("--disable-dev-shm-usage"); // Memory issues se bachne ke liye
+        options.addArguments("--window-size=1920,1080"); // Standard screen size fix karna
+        // ----------------------------------------------
         
-        // Setting the driver instance
         tdriver.set(new ChromeDriver(options));
         
         WebDriver driver = getDriver();
-        driver.manage().window().maximize();
+        // Headless mode mein maximize() kabhi-kabhi kaam nahi karta, isliye window-size upar de diya hai
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get("https://www.saucedemo.com/");
         
-        logger.info("Browser launched and navigated to URL on Thread: " + Thread.currentThread().getId());
+        logger.info("Browser launched (Headless) and navigated to URL");
     }
 
     @AfterMethod
     public void tearDown(ITestResult result) {
-        // Step 1: Handle failure and capture screenshot
         if (ITestResult.FAILURE == result.getStatus()) {
             logger.error("Test Failed: " + result.getName() + ". Taking screenshot...");
             captureScreenshots(result.getName() + "_failed");
         }
 
-        // Step 2: Cleanup and remove thread reference
         if (getDriver() != null) {
             getDriver().quit();
-            tdriver.remove(); // Essential to prevent memory leaks in parallel runs
-            logger.info("WebDriver closed and ThreadLocal removed for Thread: " + Thread.currentThread().getId());
+            tdriver.remove();
+            logger.info("WebDriver closed for Thread: " + Thread.currentThread().getId());
         }
     }
 
-    /**
-     * Captures screenshot and saves it to the /Screenshots folder.
-     */
     public void captureScreenshots(String testName) {
         try {
             TakesScreenshot ts = (TakesScreenshot) getDriver();
             File src = ts.getScreenshotAs(OutputType.FILE);
-            
-            // Ensuring the directory exists
             String screenshotDir = System.getProperty("user.dir") + "/Screenshots/";
             File folder = new File(screenshotDir);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
+            if (!folder.exists()) { folder.mkdirs(); }
 
             String path = screenshotDir + testName + "_" + System.currentTimeMillis() + ".png";
             File destination = new File(path);
-            
             FileUtils.copyFile(src, destination);
-            logger.info("Screenshot saved successfully at: " + path);
+            logger.info("Screenshot saved at: " + path);
         } catch (IOException e) {
             logger.error("Failed to capture screenshot: " + e.getMessage());
         }
-    }
-
-    public void performLogin(String userType) {
-        logger.info("Performing login as: " + userType);
-        pages.LoginPage loginPage = new pages.LoginPage(getDriver());
-        loginPage.loginAs(userType);
     }
 }
