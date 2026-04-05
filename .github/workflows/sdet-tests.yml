@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # Naya Step: Docker Image Build karna
     - name: Build Docker Image
@@ -27,7 +27,7 @@ jobs:
 
     # Artifacts (Reports) extract karne ke liye niche wala step update kiya hai
     - name: Upload Test Reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: automation-report
