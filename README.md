@@ -1,55 +1,59 @@
-# 🚀 Advanced Selenium & API Automation Framework
+#**🛡️ Hybrid Test Automation Framework (SDET-L2)**
 
-### 🌟 Project Overview
-This is a hybrid automation framework built to handle both UI (SauceDemo) and API (JSONPlaceholder) testing. It features a scalable architecture using Page Object Model (POM) and is "Cloud-ready" with Docker integration.
+##**📋 Project Overview**
+Architecture design for high-performance UI and API testing. This framework is built to be environment-agnostic, supporting local execution as well as containerized CI/CD pipelines.
 
----
+-------------------------------------------------------------------------------------------------------------------------------------------
+##**🏗️ Technical Stack**
+UI Automation: Selenium WebDriver 4.x
 
-### 🛠️ Tech Stack & Patterns
-* **Language:** Java 17
-* **UI Automation:** Selenium WebDriver
-* **API Testing:** Rest-Assured
-* **Framework:** TestNG, Maven
-* **Design Pattern:** Page Object Model (POM)
-* **Infrastructure:** Docker & Selenium Grid
+API Testing: Rest-Assured
 
----
+Execution Engine: TestNG
 
-### 🏗️ Framework Architecture
-1. **BaseTest:** Common setup for WebDriver (Incognito mode).
-2. **Page Objects:** Separated UI locators and actions.
-3. **API Tests:** Schema validation and functional API testing.
-4. **Resources:** JSON Schemas and Docker configurations.
+Architecture: Page Object Model (POM) with Fluent Interface
 
----
+Thread Safety: Custom ThreadLocal implementation
 
-### 🐳 Docker & Infrastructure (Task 4)
-This framework supports distributed testing via Selenium Grid on Docker.
-* **Run Grid:** `docker-compose up -d`
-* **Check Hub Status:** Navigate to `http://localhost:4444`
-* **Scale Chrome Nodes:** `docker-compose up -d --scale chrome=3`
+Containerization: Docker & Selenium Grid
 
----
+CI/CD: GitHub Actions (with Auto-Artifact Recovery)
+------------------------------------------------------------------------------------------------------------------------------------------
+##**🧪 Core Framework Features**
+Headless Execution: Pre-configured for Chrome Headless mode (headless=new) to optimize resources in Cloud/Linux environments.
 
-### 🧪 Features & Coverage
-* **UI Testing:**
-    - Valid/Invalid Login workflows.
-    - End-to-end "Add to Cart" functionality.
-* **API Testing:**
-    - JSON Schema Validation using Rest-Assured.
-    - Status code and response body assertions.
-* **Git Management:** Handled complex merge conflicts during feature integration.
+Thread-Safe Driver: Custom ThreadLocal<WebDriver> wrapper to ensure zero race conditions during parallel execution.
 
----
+Auto-Artifact Recovery: Intelligent logic in GitHub Actions to extract failure screenshots directly from the Docker container.
 
-### 🏃 How to Run
-1. **Pre-requisites:** Ensure Java, Maven, and Docker are installed.
-2. **Execution:**
-   - For all tests: `mvn test`
-   - For specific UI test: `mvn test -Dtest=LoginTest`
-   - For API Schema test: `mvn test -Dtest=JsonPlaceholderSchemaTest`
+Scalability: Integrated with docker-compose for horizontal scaling of Selenium nodes.
 
----
+--------------------------------------------------------------------------------------------------------------------------------------
+##**🚀 Execution Guide**
+###1. Standard Execution
+mvn clean test (Executes the entire regression suite)
 
-### 💡 Pro-Tip for Interviewers
-> This framework is designed to be "Environment Agnostic". Whether it's running on a local machine or inside a CI/CD pipeline with Docker, the setup remains consistent and reliable.
+###2. Specific Test Execution
+mvn test -Dtest=LoginTests (Runs specific UI tests)
+mvn test -Dtest=JsonPlaceholderSchemaTest (Runs API tests)
+
+###3. Docker Infrastructure
+docker-compose up -d --scale chrome=3 (Spins up a scalable Selenium Grid)
+
+--------------------------------------------------------------------------------------------------------------------------------------
+##**📂 Project Structure**
+.github/workflows: CI/CD Pipeline Definitions
+
+src/test/java/pages: Page Objects and UI Actions
+
+src/test/java/tests: Functional UI & API Test Cases
+
+Screenshots: Automated failure captures
+
+Dockerfile: Container environment configuration
+
+pom.xml: Dependency and Plugin management
+--------------------------------------------------------------------------------------------------------------------------------------
+##**👨‍💻 Author**
+###Nishant Malewar
+SDET / Automation Engineer
