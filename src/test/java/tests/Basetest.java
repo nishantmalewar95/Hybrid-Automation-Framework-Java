@@ -77,16 +77,21 @@ public class Basetest {
         try {
             TakesScreenshot ts = (TakesScreenshot) getDriver();
             File src = ts.getScreenshotAs(OutputType.FILE);
-            String screenshotDir = System.getProperty("user.dir") + "/Screenshots/";
+    
+            // Docker container ke andar ka fixed path use kar rahe hain
+            String screenshotDir = "/app/Screenshots/"; 
+            
             File folder = new File(screenshotDir);
-            if (!folder.exists()) { folder.mkdirs(); }
-
+            if (!folder.exists()) { 
+                folder.mkdirs(); 
+            }
+    
             String path = screenshotDir + testName + "_" + System.currentTimeMillis() + ".png";
             File destination = new File(path);
             FileUtils.copyFile(src, destination);
-            logger.info("Screenshot saved at: " + path);
+            
+            logger.info("Screenshot saved successfully at: " + path);
         } catch (IOException e) {
             logger.error("Failed to capture screenshot: " + e.getMessage());
         }
     }
-}

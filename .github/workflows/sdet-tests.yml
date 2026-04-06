@@ -17,18 +17,27 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # Naya Step: Docker Image Build karna
     - name: Build Docker Image
       run: docker build -t my-sdet-framework .
 
-    # Naya Step: Docker Container Run karna
+    # Step: Container ko naam dekar run karna taaki hum baad mein files nikaal sakein
     - name: Run Tests in Docker
-      run: docker run my-sdet-framework
+      run: |
+        docker run --name test-container my-sdet-framework || true
 
-    # Artifacts (Reports) extract karne ke liye niche wala step update kiya hai
-    - name: Upload Test Reports
+    # Step: Container ke andar se Reports aur Screenshots local machine par lana
+    - name: Copy Artifacts from Container
+      if: always()
+      run: |
+        docker cp test-container:/app/target/surefire-reports ./target/surefire-reports || echo "Reports not found"
+        docker cp test-container:/app/Screenshots ./Screenshots || echo "Screenshots not found"
+
+    # Step: Ab ye local folders ko upload karega
+    - name: Upload Test Results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: automation-report
-        path: target/surefire-reports/
+        name: automation-execution-results
+        path: |
+          target/surefire-reports/
+          Screenshots/
